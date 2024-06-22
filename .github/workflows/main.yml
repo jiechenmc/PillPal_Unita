@@ -7,14 +7,16 @@ jobs:
     name: deploy to s3 bucket
     runs-on: ubuntu-22.04
     steps:
+    - name: Checkout branch
+      uses: actions/checkout@v4
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: '18.2'
+        node-version: '18.18.2'
     - name: Build & Export 
-      run: yarn build
+      run: yarn && yarn build
     - name: Upload to s3 bucket
-    - uses: keithweaver/aws-s3-github-action@v1.0.0
+      uses: keithweaver/aws-s3-github-action@v1.0.0
       with:
         command: cp
         source: ./out
@@ -22,5 +24,6 @@ jobs:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_region: us-east-1
+        flags: --recursive
       
     
