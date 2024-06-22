@@ -1,0 +1,26 @@
+on: 
+  pull_request: 
+    branches:
+    - main
+jobs:
+  my_job:
+    name: deploy to s3 bucket
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.2'
+    - name: Build & Export 
+      run: yarn build
+    - name: Upload to s3 bucket
+    - uses: keithweaver/aws-s3-github-action@v1.0.0
+      with:
+        command: cp
+        source: ./out
+        destination: s3://pillpal-bucket-test
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_region: us-east-1
+      
+    
