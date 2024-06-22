@@ -14,7 +14,7 @@ jobs:
       with:
         node-version: '18.2'
     - name: Build & Export 
-      run: yarn build
+      run: yarn && yarn build
     - name: Upload to s3 bucket
       uses: keithweaver/aws-s3-github-action@v1.0.0
       with:
