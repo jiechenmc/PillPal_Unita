@@ -14,7 +14,7 @@ jobs:
     - name: Build & Export 
       run: yarn build
     - name: Upload to s3 bucket
-    - uses: keithweaver/aws-s3-github-action@v1.0.0
+      uses: keithweaver/aws-s3-github-action@v1.0.0
       with:
         command: cp
         source: ./out
