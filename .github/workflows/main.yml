@@ -7,6 +7,8 @@ jobs:
     name: deploy to s3 bucket
     runs-on: ubuntu-22.04
     steps:
+    - name: Checkout branch
+      uses: actions/checkout@v4
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
