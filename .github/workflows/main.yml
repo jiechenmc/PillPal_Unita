@@ -27,9 +27,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Build & Export
+      - name: Build Project
         if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn && yarn build
+        run: yarn
+
+      - name: Export Project
+        run: yarn build
+
       - name: Upload to s3 bucket
         uses: keithweaver/aws-s3-github-action@v1.0.0
         with:
