@@ -13,26 +13,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18.18.2"
+          cache: "yarn"
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - name: Yarn Cache
-        uses: actions/cache@v1
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Build Project
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn
-
-      - name: Export Project
-        run: yarn build
+      - name: Build & Export
+        run: yarn && yarn build
 
       - name: Upload to s3 bucket
         uses: keithweaver/aws-s3-github-action@v1.0.0
