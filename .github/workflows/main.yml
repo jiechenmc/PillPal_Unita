@@ -1,29 +1,41 @@
-on: 
-  pull_request: 
+on:
+  pull_request:
     branches:
-    - main
+      - main
 jobs:
   my_job:
     name: deploy to s3 bucket
     runs-on: ubuntu-22.04
     steps:
-    - name: Checkout branch
-      uses: actions/checkout@v4
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18.18.2'
-    - name: Build & Export 
-      run: yarn && yarn build
-    - name: Upload to s3 bucket
-      uses: keithweaver/aws-s3-github-action@v1.0.0
-      with:
-        command: cp
-        source: ./out
-        destination: s3://pillpal-bucket-test
-        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws_region: us-east-1
-        flags: --recursive
-      
-    
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.18.2"
+          cache: "yarn"
+      - name: Cache Build
+        uses: actions/cache@v4
+        with:
+          # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      - name: Build & Export
+        run: yarn && yarn build
+
+      - name: Upload to s3 bucket
+        uses: keithweaver/aws-s3-github-action@v1.0.0
+        with:
+          command: cp
+          source: ./out
+          destination: s3://pillpal-bucket-test
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
+          flags: --recursive
