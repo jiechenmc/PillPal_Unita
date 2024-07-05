@@ -1,10 +1,21 @@
 'use client'
+import { useSession, signIn, signOut } from "next-auth/react"
 
-export default function Home() {
-
+export default function Component() {
+  const { data: session } = useSession()
+  console.log(session)
+  if (session) {
+    return (
+      <>
+        Signed in as {session.user!.email} <br />
+        <button onClick={() => signOut()}>Sign out</button>
+      </>
+    )
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>Welcome to PillPals</h1>
-    </main>
-  );
+    <>
+      Not signed in <br />
+      <button onClick={() => signIn()}>Sign in</button>
+    </>
+  )
 }
