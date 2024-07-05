@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import CognitoProvider from "next-auth/providers/cognito";
 
+
 const handler = NextAuth({
     providers: [
         CognitoProvider({
@@ -17,7 +18,7 @@ const handler = NextAuth({
             return { ...token, ...user, ...account };
         },
         async session({ session, token }) {
-            session.user!.id = token.id_token;
+            session.user.id_token = token.id_token as string;
             return session;
         }
     }
